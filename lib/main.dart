@@ -34,7 +34,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   static const birthdayTileTitle = 'Birthday';
   static const birthdayInvitationTitle =
-      'You are invited into birthday party thrown by ....';
+      'You are  ....';
   static const tileWidthPercent = 0.4;
   static const tileHeightPercent = 0.4;
 
