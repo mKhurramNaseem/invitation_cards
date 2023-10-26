@@ -7,7 +7,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  static const appTitleText = 'Invitations';
+  static const appTitleText = 'Birthday Invitations ';
   static const defaultPosition = 0.0;
   const MyApp({super.key});
 
