@@ -1,6 +1,9 @@
 import 'package:animation_full/animated_card.dart';
+import 'package:animation_full/main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+typedef Validation = (bool,bool) Function();
 
 class InviteTile extends StatefulWidget {
   const InviteTile({
@@ -11,10 +14,12 @@ class InviteTile extends StatefulWidget {
     this.height = 400,
     this.to = '',
     this.from = '',
+    required this.validate,
   });
   final String invitationTitle;
   final double width, height;
   final String to, from, tileTitle;
+  final Validation validate;
 
   @override
   State<InviteTile> createState() => _InviteTileState();
@@ -26,26 +31,28 @@ class _InviteTileState extends State<InviteTile>
   late AnimationController _animationController;
 
 // All Durations in milliseconds
-  static const _delay = 50;
-  static const _barWidthAnimationDuration = 150;
-  static const _sheetHeightAnimationDuration = 200;
-  static const _titleSlideDuration = 150;
-  static const _toTextSlideDuration = 150;
-  static const _fromTextSlideDuration = 150;
-  static const _buttonFadeInDuration = 150;
+  static const delay = 50;
+  static const barWidthAnimationDuration = 150;
+  static const sheetHeightAnimationDuration = 200;
+  static const titleSlideDuration = 150;
+  static const toTextSlideDuration = 150;
+  static const fromTextSlideDuration = 150;
+  static const buttonFadeInDuration = 150;
+  static const tileWidthPercent = 0.5;
+  static const tileHeightPercent = 0.2;
 
   @override
   void initState() {
     super.initState();
 
     // Total Duration of the Staggered Animation
-    const animationDurationInMilliSeconds = _barWidthAnimationDuration +
-        _sheetHeightAnimationDuration +
-        _titleSlideDuration +
-        _toTextSlideDuration +
-        _fromTextSlideDuration +
-        _buttonFadeInDuration +
-        _delay * 3;
+    const animationDurationInMilliSeconds = barWidthAnimationDuration +
+        sheetHeightAnimationDuration +
+        titleSlideDuration +
+        toTextSlideDuration +
+        fromTextSlideDuration +
+        buttonFadeInDuration +
+        delay * 3;
 
     // Initializing Animation Controller
     _animationController = AnimationController(
@@ -69,45 +76,47 @@ class _InviteTileState extends State<InviteTile>
       child: Stack(
         children: [
           Positioned(
-            top: 0,
-            left: 0,
-            width: widget.width * 0.5,
-            height: widget.height * 0.2,
+            top: MyApp.defaultPosition,
+            left: MyApp.defaultPosition,
+            width: widget.width * tileWidthPercent,
+            height: widget.height * tileHeightPercent,
             child: ListTile(
               style: ListTileStyle.list,
               shape: const StadiumBorder(
                 side: BorderSide(
-                  color: Colors.black,
+                  color: Colors.purple,
                   style: BorderStyle.solid,
                   width: 2,
                 ),
               ),
-              splashColor: Colors.brown,
+              splashColor: Theme.of(context).colorScheme.inversePrimary,
               titleTextStyle: GoogleFonts.ebGaramond(
-                textStyle: const TextStyle(
-                    color: Colors.white,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.bold),
+                textStyle: TextStyle(
+                  color: Colors.purple,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.bold,
+                  fontSize: (widget.width + widget.height) / 40,
+                ),
               ),
               title: Text(
                 widget.tileTitle,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.bold,
-                ),
               ),
-              trailing: const Icon(Icons.arrow_forward_ios),
-              tileColor: Colors.grey,
+              trailing: Icon(
+                Icons.arrow_forward_ios,
+                color: Colors.purple,
+                size: (widget.width + widget.height) / 35,
+              ),
+              tileColor: Colors.white,
+              titleAlignment: ListTileTitleAlignment.center,
               onTap: _onTileTap,
             ),
           ),
           Positioned(
-            top: 0,
-            left: 200,
-            width: widget.width * 0.5,
-            height: widget.height,
+            top: MyApp.defaultPosition,
+            left: widget.width * tileWidthPercent,
             child: AnimatedCard(
+              width: widget.width * tileWidthPercent,
+              height: widget.height,
               listenable: _animationController,
               title: widget.invitationTitle,
               to: widget.to,
@@ -120,6 +129,9 @@ class _InviteTileState extends State<InviteTile>
   }
 
   void _onTileTap() {
-    _animationController.forward();
+    var (bool fromHasText ,bool toHasText) = widget.validate();
+    if (fromHasText && toHasText) {
+      _animationController.forward();
+    }
   }
 }
